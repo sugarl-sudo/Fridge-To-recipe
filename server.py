@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import numpy as np
 import cv2
-from image_process import canny
+from image_process import canny, ML
 from datetime import datetime
 import os
 import string
@@ -20,7 +20,7 @@ def random_str(n):
 @app.route('/')
 def index():
     images = os.listdir(SAVE_DIR)[::-1] # 画像PATHのリスト
-    return render_template('index.html', images=images)
+    return render_template('index.html')
 
 @app.route('/images/<path:path>')
 def send_js(path):
@@ -30,22 +30,28 @@ def send_js(path):
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files['image']:
-        # 画像として読み込み
+        # 画像保存ディレクトリ内の画像を削除
+        for filename in os.listdir(SAVE_DIR):
+            file_path = os.path.join(SAVE_DIR, filename)
+            os.unlink(file_path)
+
+        # 入力画像をモデルが処理可能な形式に変換
         stream = request.files['image'].stream
         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-        img = cv2.imdecode(img_array, 1)
+        img = cv2.imdecode(img_array, 1) # Shape = (高さ, 幅, チャンネル数) dtype = uint8
 
-        # 変換
-        img = canny(img)
+        # 画像処理
+        answer = ML(img)
 
-        # 保存
-        dt_now = datetime.now().strftime("%Y_%m_%d%_H_%M_%S_") + random_str(5)
-        save_path = os.path.join(SAVE_DIR, dt_now + ".png")
+        # 処理された画像を保存
+        fixed_filename = "uploaded_image.png"
+        save_path = os.path.join(SAVE_DIR, fixed_filename)
         cv2.imwrite(save_path, img)
+        images = os.listdir(SAVE_DIR)[::-1]
 
-        print("save", save_path)
-
-        return redirect('/')
+        return render_template('index.html', images=images, answer=answer)
+    
+    return redirect('/')
 
 if __name__ == '__main__':
     app.debug = True

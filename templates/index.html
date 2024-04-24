@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<!-- 画像入力フォーム -->
 <form action="/upload" method="post" enctype="multipart/form-data">
   <input type="file" name="image" accept="image/png, image/jpeg">
   <button type="submit">submit</button>
@@ -13,5 +14,10 @@
     </div>
   {% endfor %}
 {% endif %}
+
+<!-- answerの内容を表示 -->
+<div>
+  <p>{{ answer }}</p>
+</div>
 
 {% endblock %}
