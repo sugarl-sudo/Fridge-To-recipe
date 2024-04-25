@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import numpy as np
 import cv2
-from image_process import canny, ML
+from image_process import ML
+from chatgpt import chatgpt
 import os
 import string
 import random
@@ -39,8 +40,14 @@ def upload():
         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
         img = cv2.imdecode(img_array, 1) # Shape = (高さ, 幅, チャンネル数) dtype = uint8
 
-        # 画像処理
-        answer = ML(img)
+        # 入力画像から食材を検出
+        food_names = ML(img)
+
+        # 食材名のリストからプロンプトを生成
+        prompt = '、'.join(food_names) + 'を使ったレシピを教えてください'
+
+        # プロンプトからレシピを提案
+        answer = chatgpt(prompt)
 
         # 処理された画像を保存
         fixed_filename = "uploaded_image.png"
