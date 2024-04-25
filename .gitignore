@@ -162,5 +162,5 @@ cython_debug/
 
 coco-data/
 cook-ai-dataset/
-
-models/sam_vit_h_4b8939.pth
+classifier/results/
+.vscode/
