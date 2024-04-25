@@ -4,8 +4,6 @@ import cv2
 from image_process import ML
 from chatgpt import chatgpt
 import os
-import string
-import random
 
 SAVE_DIR = "./uploaded_images" # 画像保存ディレクトリ
 if not os.path.isdir(SAVE_DIR):
@@ -13,20 +11,14 @@ if not os.path.isdir(SAVE_DIR):
 
 app = Flask(__name__, static_url_path="")
 
-# 長さnのランダムな文字列を生成
-def random_str(n):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(n)])
-
 @app.route('/')
 def index():
-    images = os.listdir(SAVE_DIR)[::-1] # 画像PATHのリスト
     return render_template('index.html')
 
 @app.route('/images/<path:path>')
 def send_js(path):
     return send_from_directory(SAVE_DIR, path)
 
-# 参考: https://qiita.com/yuuuu3/items/6e4206fdc8c83747544b
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files['image']:
@@ -44,10 +36,29 @@ def upload():
         food_names = ML(img)
 
         # 食材名のリストからプロンプトを生成
-        prompt = '、'.join(food_names) + 'を使ったレシピを教えてください'
+        prompt = f"{'、'.join(food_names)}を使った3つのレシピの料理名と材料と手順を挙げてください。材料の分量を必ず教えてください\
+        出力のフォーマット：\
+            ・料理名1\
+                材料\
+                手順\
+            ・料理名2\
+                材料\
+                手順\
+            ・料理名3\
+                材料\
+                手順\
+            "
+        
+        # prompt = f"{'、'.join(food_names)}を使ったレシピの料理名を3つ挙げてください。このとき、番号は表示しないでください。\
+        #     出力のフォーマット：\
+        #         料理名\
+        #         料理名\
+        #         料理名\
+        #         "
 
         # プロンプトからレシピを提案
         answer = chatgpt(prompt)
+        answer = answer.replace(" ", "&nbsp;").replace('\n', '<br>')
 
         # 処理された画像を保存
         fixed_filename = "uploaded_image.png"
