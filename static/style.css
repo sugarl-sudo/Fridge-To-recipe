@@ -1,0 +1,57 @@
+body, html {
+  margin: 0;
+  height: 100%;  /* 全画面の高さを使う */
+  width: 100%;
+  display: flex; /* フレックスボックスを使う */
+}
+
+.half {
+  flex: 1; /* 利用可能なスペースを均等に分割 */
+  width: 50%; /* 幅を画面の50%に設定 */
+  box-sizing: border-box; /* パディングとボーダーを幅に含める */
+  margin: 20px;
+}
+
+#right {
+  border: 3px solid gray;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.img-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-button{
+  padding: 10px 20px;
+  background: #dddddd;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.img-display{
+  height: 200px;
+  border: 3px solid gray;
+  border-radius: 10px;
+  margin: 10px;
+  margin-left: 90px;
+  margin-right: 90px;
+}
+
+.suggest-button {
+  padding: 10px 20px;
+  background: #dddddd;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

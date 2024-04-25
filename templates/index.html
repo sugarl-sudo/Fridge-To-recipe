@@ -1,23 +1,60 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- 画像入力フォーム -->
-<form action="/upload" method="post" enctype="multipart/form-data">
-  <input type="file" name="image" accept="image/png, image/jpeg">
-  <button type="submit">submit</button>
-</form>
+<div id="left" class="half">
+  <!-- 見出し、アプリの説明 -->
+  <h1>レシピ提案AI</h1>
+  <p>このアプリの説明を記載する。</p>
 
-{% if images %}
-  {% for path in images %}
-    <div>
-      <img src="images/{{ path }}" style="margin-top: 10px; vertical-align: bottom; width: 200px;">
+  <!-- 画像入力フォーム -->
+  <form action="/upload" method="post" enctype="multipart/form-data" class="img-form">
+    <div class="centered">
+      <label for="file-sample" class="select-button">画像を選択</label>
+      <input id="file-sample" type="file" name="image" accept="image/png, image/jpeg" style="display: none;">
+      <img id="file-preview" style="height: 30px;">
     </div>
-  {% endfor %}
-{% endif %}
+    <!-- 入力画像を表示 -->
+    <div class="centered img-display">
+      {% if images %}
+        {% for path in images %}
+            <img src="images/{{ path }}" style="height: 150px;">
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="centered">
+      <button type="submit" class="suggest-button">提案</button>
+    </div>
+  </form>
+</div>
 
-<!-- answerの内容を表示 -->
-<div>
-  <p>{{ answer }}</p>
+<!-- <div id="right" class="half">
+
+  {% if answer %}
+    <p>{{ answer }}</p>
+  {% else %}
+    <p>提案されたレシピが表示されます。</p>
+  {% endif %}
+</div> -->
+
+<div id="right" class="half{% if not answer %} centered{% endif %}">
+  <!-- answerの内容を表示 -->
+  {% if answer %}
+    <p>{{ answer }}</p>
+  {% else %}
+    <p>提案されたレシピが表示されます。</p>
+  {% endif %}
 </div>
 
 {% endblock %}
+
+
+
+
+
+
+<!-- 画像入力フォーム（旧） -->
+<!-- <form action="/upload" method="post" enctype="multipart/form-data">
+  <input id="file-sample" type="file" name="image" accept="image/png, image/jpeg" display="none">
+  <img id="file-preview" style="margin-top: 10px; vertical-align: bottom; width: 200px;">
+  <button type="submit">submit</button>
+</form> -->
