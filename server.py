@@ -2,12 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import numpy as np
 import cv2
 from image_process import canny, ML
-from datetime import datetime
 import os
 import string
 import random
 
-SAVE_DIR = "./images" # 画像保存ディレクトリ
+SAVE_DIR = "./uploaded_images" # 画像保存ディレクトリ
 if not os.path.isdir(SAVE_DIR):
     os.mkdir(SAVE_DIR)
 
