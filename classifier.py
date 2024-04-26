@@ -64,6 +64,7 @@ def prepare_dataloader(data_dir, batch_size=1):
 
 def inference(model, dataloader, device, idx_to_class):
     model.eval()
+    segment_classes = []
     with torch.no_grad():
         for inputs, file_name in dataloader:
             inputs = inputs.to(device)
@@ -74,10 +75,13 @@ def inference(model, dataloader, device, idx_to_class):
             # correct += (predicted == labels).sum().item()
         # print(f'Accuracy: {100 * correct / total}%')
             print(f'fileName, class', file_name, idx_to_class[predicted.item()])
+
             # print(predicted,)
+            segment_classes.append(idx_to_class[predicted.item()])
+    return segment_classes
 
 
-def main():
+def run_classifier():
     # デバイスの設定
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -86,14 +90,15 @@ def main():
     model = initialize_model(num_classes).to(device)
 
     # モデルのロード
-    model = load_model("classifier/results/resnet18/model_epoch_10.pth", model, device)
+    model = load_model("/home/sugarl/VScode/team18/classifier/results/resnet18/model_epoch_10.pth", model, device)
     data_dir = "/home/sugarl/VScode/team18/data/"
     dataloader = prepare_dataloader(data_dir)
-    with open('classifier/train_idx_to_class.yaml') as f:
+    with open('/home/sugarl/VScode/team18/classifier/train_idx_to_class.yaml') as f:
         idx_to_class = yaml.load(f, Loader=yaml.FullLoader)
     # print(idx_to_class)
-    inference(model, dataloader, device, idx_to_class)
+    segment_classes = inference(model, dataloader, device, idx_to_class)
 
+    return segment_classes
 
 if __name__ == "__main__":
-    main()
+    run_classifier()

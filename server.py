@@ -5,7 +5,7 @@ from image_process import ML
 from chatgpt import chatgpt
 import os
 
-SAVE_DIR = "./uploaded_images" # 画像保存ディレクトリ
+SAVE_DIR = "./data/uploaded_images" # 画像保存ディレクトリ
 if not os.path.isdir(SAVE_DIR):
     os.mkdir(SAVE_DIR)
 
@@ -31,7 +31,10 @@ def upload():
         stream = request.files['image'].stream
         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
         img = cv2.imdecode(img_array, 1) # Shape = (高さ, 幅, チャンネル数) dtype = uint8
-
+        # 処理された画像を保存
+        fixed_filename = "uploaded_image.png"
+        save_path = os.path.join(SAVE_DIR, fixed_filename)
+        cv2.imwrite(save_path, img)
         # 入力画像から食材を検出
         food_names = ML(img)
 
@@ -60,10 +63,7 @@ def upload():
         answer = chatgpt(prompt)
         answer = answer.replace(" ", "&nbsp;").replace('\n', '<br>')
 
-        # 処理された画像を保存
-        fixed_filename = "uploaded_image.png"
-        save_path = os.path.join(SAVE_DIR, fixed_filename)
-        cv2.imwrite(save_path, img)
+
         images = os.listdir(SAVE_DIR)[::-1]
 
         return render_template('index.html', images=images, answer=answer)

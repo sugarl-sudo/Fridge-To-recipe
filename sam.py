@@ -72,8 +72,8 @@ def read_image(file_name):
     return image, height, width
 
 
-def main():
-    image, height, width = read_image("uploaded_images/uploaded_image.JPG")
+def run_sam():
+    image, height, width = read_image("/home/sugarl/VScode/team18/data/uploaded_images/uploaded_image.png")
     image = cv2.resize(image, (640, 480))
     height, width = image.shape[:2]
     sam = SegmentAnything(device, "vit_b", "models/sam_vit_b_01ec64.pth")
@@ -120,4 +120,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_sam()
