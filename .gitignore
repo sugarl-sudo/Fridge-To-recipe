@@ -163,5 +163,7 @@ coco-data/
 cook-ai-dataset/
 classifier/results/
 .vscode/
-uploaded_images/
+# uploaded_images/
 models/
+# segment_images/
+data/
