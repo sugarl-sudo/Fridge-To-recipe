@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- <div class="header">
+  <h1 style="margin: 0;">レシピ提案AI</h1>
+</div> -->
+
+<div class="container">
+  <div id="left" class="half">
+    <!-- 見出し-->
+    <h1>レシピ提案AI</h1>
+
+    <!-- 画像入力フォーム -->
+    <form action="/upload" method="post" enctype="multipart/form-data" class="img-form">
+      <!-- 画像選択ボタン -->
+      <div class="centered">
+        <label for="file-sample" class="select-button">画像を選択</label>
+        <input id="file-sample" type="file" name="image" accept="image/png, image/jpeg" style="display: none;">
+        <img id="file-preview" style="height: 30px;">
+      </div>
+      <!-- 入力画像 -->
+      <div class="centered img-display">
+        {% if images %}
+          {% for path in images %}
+              <img src="images/{{ path }}" style="height: 150px;">
+          {% endfor %}
+        {% endif %}
+      </div>
+      <!-- 提案ボタン -->
+      <div class="centered">
+        <button type="submit" class="suggest-button">提案</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="right" class="half{% if not answer %} centered{% endif %}">
+    <!-- ChatGPTの回答 -->
+    {% if answer %}
+      <p>{{ answer|safe }}</p>
+    {% else %}
+      <p style="color: gray;">提案されたレシピが表示されます。</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
