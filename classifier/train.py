@@ -4,19 +4,23 @@ import torch.optim as optim
 from torchvision import datasets, models, transforms
 from torch.utils.data import DataLoader
 import os
+import yaml
 
 
 def save_model(model, optimizer, epoch, loss, filepath="model_checkpoint.pth"):
-    torch.save({
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'epoch': epoch,
-        'loss': loss
-    }, filepath)
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "epoch": epoch,
+            "loss": loss,
+        },
+        filepath,
+    )
 
 
 def train_model(model, criterion, optimizer, num_epochs=25, dataloaders=None, dataset_sizes=None, device="cuda:0"):
-    best_loss = float('inf')
+    best_loss = float("inf")
     for epoch in range(num_epochs):
         print(f"Epoch {epoch}/{num_epochs - 1}")
         print("-" * 10)
@@ -85,7 +89,7 @@ def evaluate_model(model, dataloader, criterion, device="cuda:0"):
     total_loss = running_loss / total_samples
     total_accuracy = running_corrects.double() / total_samples
 
-    print(f'Loss: {total_loss:.4f} Accuracy: {total_accuracy:.4f}')
+    print(f"Loss: {total_loss:.4f} Accuracy: {total_accuracy:.4f}")
 
 
 def main():
@@ -122,10 +126,18 @@ def main():
     dataloaders = {
         x: DataLoader(image_datasets[x], batch_size=64, shuffle=True, num_workers=4) for x in ["train", "valid", "test"]
     }
+    class_to_idx = image_datasets["train"].class_to_idx
+    idx_to_class = {v: k for k, v in class_to_idx.items()}
+    with open("train_idx_to_class.yaml", "w") as f:
+        yaml.dump(idx_to_class, f)
+    class_to_idx = image_datasets["test"].class_to_idx
+    idx_to_class = {v: k for k, v in class_to_idx.items()}
+    with open("test_idx_to_class.yaml", "w") as f:
+        yaml.dump(idx_to_class, f)
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "valid", "test"]}
     class_names = image_datasets["train"].classes
-    print(f'Number of classes: {len(class_names)}')
-    print(f'Dataset sizes: {dataset_sizes}')
+    print(f"Number of classes: {len(class_names)}")
+    print(f"Dataset sizes: {dataset_sizes}")
     model = models.resnet50(pretrained=True)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, len(class_names))
@@ -136,7 +148,9 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=0.001)
 
-    model = train_model(model, criterion, optimizer, num_epochs=50, dataloaders=dataloaders, dataset_sizes=dataset_sizes, device=device)
+    model = train_model(
+        model, criterion, optimizer, num_epochs=1, dataloaders=dataloaders, dataset_sizes=dataset_sizes, device=device
+    )
     evaluate_model(model, dataloaders["test"], criterion, device=device)
 
 
