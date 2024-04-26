@@ -100,37 +100,68 @@ def job(filename, sam, ic, gpt3):
 
     # 名前の索引
 def get_name(class_name):
-    if class_name == "sausage":
-        return "ソーセージ"
-    if class_name == "cabbage":
-        return "キャベツ"
-    if class_name == "potato":
-        return "じゃがいも"
-    if class_name == "milk":
-        return "牛乳"
-    if class_name == "pumpkin":
-        return "かぼちゃ"
-    if class_name == "green_pepper":
-        return "ピーマン"
-    if class_name == "nasubi":
-        return "なすび"
-    if class_name == "paprika":
-        return "パプリカ"
-    if class_name == "carrot":
-        return "人参"
     if class_name == "apple":
         return "りんご"
-    if class_name == "chikin":
-        return "とり肉"
-    if class_name == "pork":
-        return "豚肉"
-    if class_name == "tomato":
-        return "トマト"
-    if class_name == "banana":
+    elif class_name == "banana":
         return "バナナ"
-    if class_name == "onion":
+    elif class_name == "beef":
+        return "牛肉"
+    elif class_name == "blueberries":
+        return "ブルーベリー"
+    elif class_name == "bread":
+        return "パン"
+    elif class_name == "butter":
+        return "バター"
+    elif class_name == "carrot":
+        return "にんじん"
+    elif class_name == "cheese":
+        return "チーズ"
+    elif class_name == "chicken":
+        return "鶏肉"
+    elif class_name == "chicken_breast":
+        return "鶏胸肉"
+    elif class_name == "chocolate":
+        return "チョコレート"
+    elif class_name == "corn":
+        return "とうもろこし"
+    elif class_name == "eggs":
+        return "卵"
+    elif class_name == "flour":
+        return "小麦粉"
+    elif class_name == "goat_cheese":
+        return "チーズ"
+    elif class_name == "green_beans":
+        return "インゲン豆"
+    elif class_name == "ground_beef":
+        return "挽肉"
+    elif class_name == "ham":
+        return "ハム"
+    elif class_name == "heavy_cream":
+        return "生クリーム"
+    elif class_name == "lime":
+        return "ライム"
+    elif class_name == "milk":
+        return "牛乳"
+    elif class_name == "mushrooms":
+        return "キノコ"
+    elif class_name == "onion":
         return "玉ねぎ"
-    return "食品ではない".format(class_name)
+    elif class_name == "potato":
+        return "じゃがいも"
+    elif class_name == "shrimp":
+        return "えび"
+    elif class_name == "spinach":
+        return "ほうれん草"
+    elif class_name == "strawberries":
+        return "いちご"
+    elif class_name == "sugar":
+        return "砂糖"
+    elif class_name == "sweet_potato":
+        return "さつまいも"
+    elif class_name == "tomato":
+        return "トマト"
+    else:
+        return "食品ではない".format(class_name)
 
 def read_image(file_name):
     image = cv2.imread(file_name)
