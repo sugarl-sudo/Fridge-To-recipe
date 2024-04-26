@@ -165,3 +165,4 @@ classifier/results/
 .vscode/
 uploaded_images/
 models/
+segment_images/
