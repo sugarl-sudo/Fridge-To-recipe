@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "team18"
+version = "0.1.0"
+description = ""
+authors = ["sugarl-sudo <sato.yuta0112@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.3"
+numpy = "^1.26.4"
+opencv-python = "^4.9.0.80"
+chatgpt = "^2.2212.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
