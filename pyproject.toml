@@ -6,11 +6,16 @@ authors = ["sugarl-sudo <sato.yuta0112@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-flask = "^3.0.3"
-numpy = "^1.26.4"
+python = "^3.10"
 opencv-python = "^4.9.0.80"
+supervision = "^0.20.0"
+segment-anything = "^1.0"
+flask = "^3.0.3"
+torch = "2.0.0"
 chatgpt = "^2.2212.0"
+requests = "^2.31.0"
+python-dotenv = "^1.0.1"
+ipykernel = "^6.29.4"
 
 
 [build-system]
