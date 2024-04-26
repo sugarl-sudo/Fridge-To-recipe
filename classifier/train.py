@@ -56,7 +56,7 @@ def train_model(model, criterion, optimizer, num_epochs=25, dataloaders=None, da
             # モデルの保存
             if phase == "valid" and epoch_loss < best_loss:
                 best_loss = epoch_loss
-                file_path = f"results/resnet18/model_epoch_{epoch}.pth"
+                file_path = f"results/resnet50/model_epoch_{epoch}.pth"
                 save_model(model, optimizer, epoch, epoch_loss, filepath=file_path)
                 print(f"Model saved: model_epoch_{epoch}.pth")
 
@@ -126,7 +126,7 @@ def main():
     class_names = image_datasets["train"].classes
     print(f'Number of classes: {len(class_names)}')
     print(f'Dataset sizes: {dataset_sizes}')
-    model = models.resnet18(pretrained=True)
+    model = models.resnet50(pretrained=True)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, len(class_names))
 
