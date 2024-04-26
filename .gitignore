@@ -164,3 +164,4 @@ cook-ai-dataset/
 classifier/results/
 .vscode/
 uploaded_images/
+models/
