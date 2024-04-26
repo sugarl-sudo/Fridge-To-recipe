@@ -28,11 +28,12 @@ def chatgpt(prompt):
     '''
 
     # エンドポイントからのPOSTレスポンス
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers = header, data = body.encode('utf_8'))
-    # print(f"POSTレスポンスのJSONデータ: {response.text}")
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=header, data=body.encode('utf_8'))
+    print(f"POSTレスポンスのJSONデータ: {response.text}")
 
     # デシリアライズ
     rj = response.json()
+    print('rj keys', rj.keys())
 
     # ChatGPTの回答を返す
     return rj["choices"][0]["message"]["content"]
