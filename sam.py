@@ -115,7 +115,7 @@ def run_sam():
         # contours, _ = cv2.findContours(mono_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # 食品画像を切取る
         food_image = food_image[y1:y2, x1:x2]
-        cv2.imwrite(f"segment_images/food_image_{index}.png", cv2.cvtColor(food_image, cv2.COLOR_RGB2BGR))
+        cv2.imwrite(f"./data/segment_images/food_image_{index}.png", cv2.cvtColor(food_image, cv2.COLOR_RGB2BGR))
         # break
 
 
