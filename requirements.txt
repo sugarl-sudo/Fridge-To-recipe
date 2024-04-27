@@ -72,7 +72,7 @@ stack-data==0.6.3
 supervision==0.20.0
 sympy==1.12
 tls-client==1.0.1
-torch==2.0.1
+torch==2.0.0
 torchaudio==2.0.2
 torchvision==0.15.2
 tornado==6.4
