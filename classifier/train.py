@@ -5,6 +5,52 @@ from torchvision import datasets, models, transforms
 from torch.utils.data import DataLoader
 import os
 import yaml
+import sys
+import argparse
+
+
+def get_model(model_name, num_classes=30):
+    if model_name == "resnet50":
+        model = models.resnet50(pretrained=True)
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, num_classes)
+        return model
+    elif model_name == "resnet18":
+        model = models.resnet18(pretrained=True)
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, num_classes)
+        return model
+    elif model_name == "resnet18-fine":
+        model = models.resnet18(pretrained=True)
+        # すべてのパラメータを凍結
+        for param in model.parameters():
+            param.requires_grad = False
+
+        # 最後の畳み込みブロックと全結合層の凍結を解除
+        for param in model.layer4.parameters():
+            param.requires_grad = True
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, num_classes)  # 例えば、10クラス分類問題の場合
+        for param in model.fc.parameters():
+            param.requires_grad = True
+        
+        return model
+    elif model_name == "resnet50-fine":
+        model = models.resnet50(pretrained=True)
+        # すべてのパラメータを凍結
+        for param in model.parameters():
+            param.requires_grad = False
+
+        # 最後の畳み込みブロックと全結合層の凍結を解除
+        for param in model.layer4.parameters():
+            param.requires_grad = True
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, num_classes)  # 例えば、10クラス分類問題の場合
+        for param in model.fc.parameters():
+            param.requires_grad = True
+        return model
+    else:
+        raise ValueError("Invalid model name")
 
 
 def save_model(model, optimizer, epoch, loss, filepath="model_checkpoint.pth"):
@@ -19,7 +65,16 @@ def save_model(model, optimizer, epoch, loss, filepath="model_checkpoint.pth"):
     )
 
 
-def train_model(model, criterion, optimizer, num_epochs=25, dataloaders=None, dataset_sizes=None, device="cuda:0"):
+def train_model(
+    model,
+    criterion,
+    optimizer,
+    num_epochs=25,
+    dataloaders=None,
+    dataset_sizes=None,
+    device="cuda:0",
+    results_dir="results",
+):
     best_loss = float("inf")
     for epoch in range(num_epochs):
         print(f"Epoch {epoch}/{num_epochs - 1}")
@@ -60,7 +115,9 @@ def train_model(model, criterion, optimizer, num_epochs=25, dataloaders=None, da
             # モデルの保存
             if phase == "valid" and epoch_loss < best_loss:
                 best_loss = epoch_loss
-                file_path = f"results/resnet50/model_epoch_{epoch}.pth"
+                if not os.path.exists(results_dir):
+                    os.makedirs(results_dir)
+                file_path = os.path.join(results_dir, f"model_epoch_{epoch}.pth")
                 save_model(model, optimizer, epoch, epoch_loss, filepath=file_path)
                 print(f"Model saved: model_epoch_{epoch}.pth")
 
@@ -93,6 +150,21 @@ def evaluate_model(model, dataloader, criterion, device="cuda:0"):
 
 
 def main():
+    # コマンドライン引数のパーサーを作成
+    parser = argparse.ArgumentParser(description="Train a model on the specified dataset.")
+    parser.add_argument("--data_dir", type=str, required=True, help="Directory where the dataset is located.")
+    parser.add_argument("--results_dir", type=str, required=True, help="Directory where the results should be saved.")
+    parser.add_argument("--model", type=str, required=True, help="Model to use for training.")
+
+    # 引数を解析
+    args = parser.parse_args()
+
+    # 引数の値を使用
+    data_dir = args.data_dir
+    results_dir = args.results_dir
+    if not os.path.exists(results_dir):
+        os.makedirs(results_dir)
+    model_name = args.model
     data_transforms = {
         "train": transforms.Compose(
             [
@@ -119,7 +191,6 @@ def main():
             ]
         ),
     }
-    data_dir = "/home/sugarl/VScode/team18/classifier/cook-ai-dataset"
     image_datasets = {
         x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ["train", "valid", "test"]
     }
@@ -128,28 +199,36 @@ def main():
     }
     class_to_idx = image_datasets["train"].class_to_idx
     idx_to_class = {v: k for k, v in class_to_idx.items()}
-    with open("train_idx_to_class.yaml", "w") as f:
+    train_class_ids = os.path.join(results_dir, model_name, "train_class_ids.yaml")
+    with open(train_class_ids, "w") as f:
         yaml.dump(idx_to_class, f)
     class_to_idx = image_datasets["test"].class_to_idx
     idx_to_class = {v: k for k, v in class_to_idx.items()}
-    with open("test_idx_to_class.yaml", "w") as f:
+    test_class_ids = os.path.join(results_dir, model_name, "test_class_ids.yaml")
+    with open(test_class_ids, "w") as f:
         yaml.dump(idx_to_class, f)
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "valid", "test"]}
     class_names = image_datasets["train"].classes
     print(f"Number of classes: {len(class_names)}")
     print(f"Dataset sizes: {dataset_sizes}")
-    model = models.resnet50(pretrained=True)
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, len(class_names))
+    model = get_model(model_name, num_classes=len(class_names))
+    
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
+    model.to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=0.001)
-
+    results_dir = os.path.join(results_dir, model_name)
     model = train_model(
-        model, criterion, optimizer, num_epochs=1, dataloaders=dataloaders, dataset_sizes=dataset_sizes, device=device
+        model,
+        criterion,
+        optimizer,
+        num_epochs=20,
+        dataloaders=dataloaders,
+        dataset_sizes=dataset_sizes,
+        device=device,
+        results_dir=results_dir,
     )
     evaluate_model(model, dataloaders["test"], criterion, device=device)
 
