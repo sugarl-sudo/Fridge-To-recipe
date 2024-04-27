@@ -90,7 +90,7 @@ def run_classifier():
     model = initialize_model(num_classes).to(device)
 
     # モデルのロード
-    model = load_model("./classifier/results/resnet18/model_epoch_10.pth", model, device)
+    model = load_model("./classifier/models/model_epoch_10.pth", model, device)
     data_dir = "./data/"
     dataloader = prepare_dataloader(data_dir)
     with open('./classifier/train_idx_to_class.yaml') as f:
@@ -99,6 +99,7 @@ def run_classifier():
     segment_classes = inference(model, dataloader, device, idx_to_class)
 
     return segment_classes
+
 
 if __name__ == "__main__":
     run_classifier()
