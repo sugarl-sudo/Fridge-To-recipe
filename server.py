@@ -19,6 +19,10 @@ def index():
 def send_js(path):
     return send_from_directory(SAVE_DIR, path)
 
+@app.route('/clear')
+def clear():
+    return redirect('/')
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files['image']:
@@ -36,10 +40,14 @@ def upload():
         save_path = os.path.join(SAVE_DIR, fixed_filename)
         cv2.imwrite(save_path, img)
         # 入力画像から食材を検出
-        food_names = ML(img)
+        # food_names = ML(img)
+        food_names = ["卵", "鶏肉", "七味"]
 
-        # 食材名のリストからプロンプトを生成
-        prompt = f"{'、'.join(food_names)}を使った3つのレシピの料理名と材料と手順を挙げてください。材料の分量を必ず教えてください\
+        #  フォームで選択されたテキストを取得
+        selected_item = request.form['item']  
+        print("選択されたアイテム:", selected_item)
+
+        prompt = f"{'、'.join(food_names)}と{selected_item}を使った3つのレシピの料理名と材料と手順を挙げてください。このとき、{selected_item}は必ず使用してください。また、材料の分量を必ず教えてください\
         出力のフォーマット：\
             ・料理名1\
                 材料\
@@ -51,22 +59,30 @@ def upload():
                 材料\
                 手順\
             "
-        
-        # prompt = f"{'、'.join(food_names)}を使ったレシピの料理名を3つ挙げてください。このとき、番号は表示しないでください。\
-        #     出力のフォーマット：\
-        #         料理名\
-        #         料理名\
-        #         料理名\
-        #         "
+
+        # # 食材名のリストからプロンプトを生成
+        # prompt = f"{'、'.join(food_names)}を使った3つのレシピの料理名と材料と手順を挙げてください。材料の分量を必ず教えてください\
+        # 出力のフォーマット：\
+        #     ・料理名1\
+        #         材料\
+        #         手順\
+        #     ・料理名2\
+        #         材料\
+        #         手順\
+        #     ・料理名3\
+        #         材料\
+        #         手順\
+        #     "
 
         # プロンプトからレシピを提案
-        answer = chatgpt(prompt)
-        answer = answer.replace(" ", "&nbsp;").replace('\n', '<br>')
-
+        recipes = chatgpt(prompt)
+        names = [recipe['name'] for recipe in recipes]
+        ingredients = [recipe['ingredients'].replace(" ", "&nbsp;").replace('\n', '<br>') for recipe in recipes]
+        procedures = [recipe['procedure'].replace(" ", "&nbsp;").replace('\n', '<br>') for recipe in recipes]
 
         images = os.listdir(SAVE_DIR)[::-1]
 
-        return render_template('index.html', images=images, answer=answer)
+        return render_template('index.html', images=images, names=names, ingredients=ingredients, procedures=procedures)
     
     return redirect('/')
 

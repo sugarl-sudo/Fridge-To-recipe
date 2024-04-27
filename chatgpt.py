@@ -29,14 +29,14 @@ def chatgpt(prompt):
 
     # エンドポイントからのPOSTレスポンス
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=header, data=body.encode('utf_8'))
-    # print(f"POSTレスポンスのJSONデータ: {response.text}")
+    print(f"POSTレスポンスのJSONデータ: {response.text}")
 
     # デシリアライズ
     rj = response.json()
     # print('rj keys', rj.keys())
 
     answer = rj["choices"][0]["message"]["content"]
-    # print(answer)
+    answer = answer.strip()
 
     # 各レシピを分割してリストに格納
     recipes = answer.split('\n\n')
@@ -44,12 +44,26 @@ def chatgpt(prompt):
     # 各レシピの名前、材料、手順を辞書に格納
     recipe_details = []
     for recipe in recipes:
-        print(f"recipe = {recipe}")
         lines = recipe.split('\n')
-        print(f"lines = {lines}")
         recipe_name = lines[0].strip('・')
-        ingredients = lines[1].strip('    材料: ')
-        procedure = '\n'.join(line.strip() for line in lines[2:])  # 手順の部分
+
+        ingredients_start_index = None
+        for index, item in enumerate(lines):
+            if '材料' in item:
+                ingredients_start_index = index
+                break
+        instructions_start_index = None
+        for index, item in enumerate(lines):
+            if '手順' in item:
+                instructions_start_index = index
+                break
+
+        ingredients = lines[ingredients_start_index : instructions_start_index] 
+        procedure = lines[instructions_start_index:]
+
+        ingredients = '\n'.join(line.strip() for line in ingredients) 
+        procedure = '\n'.join(line.strip() for line in procedure) 
+
         recipe_details.append({
             'name': recipe_name,
             'ingredients': ingredients,
@@ -57,18 +71,16 @@ def chatgpt(prompt):
         })
 
     # 辞書を出力
-    print(f"Recipe: {recipe_details}")
     for detail in recipe_details:
         print(f"Recipe Name: {detail['name']}")
-        print(f"Ingredients: {detail['ingredients']}")
-        print(f"Procedure: {detail['procedure']}\n")
+        print(f"ingredients: {detail['ingredients']}")
+        print(f"procedure: {detail['procedure']}")
 
-    # ChatGPTの回答を返す
-    return rj["choices"][0]["message"]["content"]
+    return recipe_details
 
 # デバッグ用
 if __name__ == "__main__":
-    prompt = f"はちみつ、りんご、バナナを使った3つのレシピの料理名と材料と手順を挙げてください。材料の分量を必ず教えてください\
+    prompt = f"りんご、はちみつ、バナナを使った3つのレシピの料理名と材料と手順を挙げてください。材料の分量を必ず教えてください。\
         出力のフォーマット：\
             ・料理名1\
                 材料\
@@ -80,12 +92,6 @@ if __name__ == "__main__":
                 材料\
                 手順\
             "
-    # prompt = f"卵、鶏肉、七味を使ったレシピの料理名を3つ挙げてください。このとき、番号は表示しないでください。\
-    #     出力のフォーマット：\
-    #         料理名\
-    #         料理名\
-    #         料理名\
-    #         "
 
-    answer = chatgpt(prompt)
-    # print(answer)
+    recipes = chatgpt(prompt)
+    # print(recipes)

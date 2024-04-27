@@ -6,3 +6,4 @@ window.onload = function () {
       img.src = blobUrl;
   });
 }
+
