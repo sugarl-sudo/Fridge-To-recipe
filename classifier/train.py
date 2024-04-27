@@ -117,7 +117,7 @@ def train_model(
                 best_loss = epoch_loss
                 if not os.path.exists(results_dir):
                     os.makedirs(results_dir)
-                file_path = os.path.join(results_dir, f"model_epoch_{epoch}.pth")
+                file_path = os.path.join(results_dir, f"model_epoch_best.pth")
                 save_model(model, optimizer, epoch, epoch_loss, filepath=file_path)
                 print(f"Model saved: model_epoch_{epoch}.pth")
 

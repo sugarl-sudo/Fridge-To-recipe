@@ -11,12 +11,12 @@ DATA_DIRS="$HOME/data"
 
 build()
 {
-    sudo docker build . -f docker/nvc/Dockerfile --build-arg USER_UID=`(id -u)` --build-arg USER_GID=`(id -g)` -t pytorch
+    docker build . -f docker/nvc/Dockerfile --build-arg USER_UID=`(id -u)` --build-arg USER_GID=`(id -g)` -t pytorch
 }
 
 shell() 
 {
-    sudo docker run --rm --gpus all --shm-size=16g -it -v $(pwd):/app -v $DATASET_DIRS:/dataset -v $DATA_DIRS:/data pytorch /bin/bash
+    docker run --rm --gpus all --shm-size=16g -it -v $(pwd):/app -v $DATASET_DIRS:/dataset -v $DATA_DIRS:/data pytorch /bin/bash
 }
 
 root()

@@ -86,14 +86,15 @@ def run_classifier():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # モデルとオプティマイザの初期化
-    num_classes = 30  # クラス数を指定
+    num_classes = 36  # クラス数を指定
     model = initialize_model(num_classes).to(device)
-
+    epoch = 18
+    load_path = f"./models/veg_and_fruite/resnet18-fine/"
     # モデルのロード
-    model = load_model("./classifier/models/model_epoch_10.pth", model, device)
-    data_dir = "./data/"
+    model = load_model(os.path.join(load_path, f"model_epoch_{epoch}.pth"), model, device)
+    data_dir = "./data"
     dataloader = prepare_dataloader(data_dir)
-    with open('./classifier/train_idx_to_class.yaml') as f:
+    with open(os.path.join(load_path, 'train_class_ids.yaml')) as f:
         idx_to_class = yaml.load(f, Loader=yaml.FullLoader)
     # print(idx_to_class)
     segment_classes = inference(model, dataloader, device, idx_to_class)
