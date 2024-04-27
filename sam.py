@@ -73,10 +73,10 @@ def read_image(file_name):
 
 
 def run_sam():
-    image, height, width = read_image("/home/sugarl/VScode/team18/data/uploaded_images/uploaded_image.png")
+    image, height, width = read_image("./data/uploaded_images/uploaded_image.png")
     image = cv2.resize(image, (640, 480))
     height, width = image.shape[:2]
-    sam = SegmentAnything(device, "vit_b", "models/sam_vit_b_01ec64.pth")
+    sam = SegmentAnything(device, "vit_b", "./models/sam_vit_b_01ec64.pth")
     # マスク生成
     sam.generat_masks(image)
     # 一定のサイズのものだけを抽出する

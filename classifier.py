@@ -90,15 +90,16 @@ def run_classifier():
     model = initialize_model(num_classes).to(device)
 
     # モデルのロード
-    model = load_model("/home/sugarl/VScode/team18/classifier/results/resnet18/model_epoch_10.pth", model, device)
-    data_dir = "/home/sugarl/VScode/team18/data/"
+    model = load_model("./classifier/models/model_epoch_10.pth", model, device)
+    data_dir = "./data/"
     dataloader = prepare_dataloader(data_dir)
-    with open('/home/sugarl/VScode/team18/classifier/train_idx_to_class.yaml') as f:
+    with open('./classifier/train_idx_to_class.yaml') as f:
         idx_to_class = yaml.load(f, Loader=yaml.FullLoader)
     # print(idx_to_class)
     segment_classes = inference(model, dataloader, device, idx_to_class)
 
     return segment_classes
+
 
 if __name__ == "__main__":
     run_classifier()
