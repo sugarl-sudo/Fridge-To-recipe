@@ -86,10 +86,10 @@ def run_classifier():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # モデルとオプティマイザの初期化
-    num_classes = 36  # クラス数を指定
+    num_classes = 30  # クラス数を指定
     model = initialize_model(num_classes).to(device)
-    epoch = 18
-    load_path = f"./models/veg_and_fruite/resnet18-fine/"
+    epoch = 10
+    load_path = f"./models/"
     # モデルのロード
     model = load_model(os.path.join(load_path, f"model_epoch_{epoch}.pth"), model, device)
     data_dir = "./data"
