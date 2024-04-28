@@ -101,7 +101,7 @@ def get_name(class_name):
         return "バナナ"
     elif class_name == "Carrot":
         return "にんじん"
-    elif class_name == "Cabbege":
+    elif class_name == "Cabbage":
         return "キャベツ"
     elif class_name == "Cauliflower":
         return "カリフラワー"
@@ -113,10 +113,10 @@ def get_name(class_name):
         return "じゃがいも"
     elif class_name == "Tomato":
         return "トマト"
-    elif class_name == "none":
-        return "食品ではない"
+    elif class_name == "None":
+        return ""
     else:
-        ValueError("Unknown class name")
+        raise ValueError("Unknown class name")
 
 
 def read_image(file_name):

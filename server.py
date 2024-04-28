@@ -40,9 +40,9 @@ def upload():
         save_path = os.path.join(SAVE_DIR, fixed_filename)
         cv2.imwrite(save_path, img)
         # 入力画像から食材を検出
-        # food_names = ML(img)
-        # print(f"food_names: {food_names}")
-        food_names = ["卵", "鶏肉", "七味"]
+        food_names = ML(img)
+        print(f"food_names: {food_names}")
+        # food_names = ["卵", "鶏肉", "七味"]
 
         #  フォームで選択されたテキストを取得
         selected_item = request.form['item']  
@@ -84,9 +84,9 @@ def upload():
         images = os.listdir(SAVE_DIR)[::-1]
 
         return render_template('index.html', images=images, names=names, ingredients=ingredients, procedures=procedures)
-    
+
     return redirect('/')
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='0.0.0.0', port=8888)
+    # app.debug = True
+    app.run(host='0.0.0.0', port=5000, debug=False)
