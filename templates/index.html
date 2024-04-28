@@ -13,11 +13,12 @@
         <span class="dli-chevron-down"></span>
       </div>
       <div class="centered img-display">
-        <img id="file-preview" style="height: 150px;">
         {% if images %}
           {% for path in images %}
               <img src="images/{{ path }}" style="height: 150px;">
           {% endfor %}
+        {% else %}
+          <img src="./sample.jpg" id="file-preview" style="height: 150px;">
         {% endif %}
       </div>
       <div class="centered">
@@ -39,14 +40,14 @@
         <button id="suggest" type="submit" style="display: none;"></button>
       </div>
     </form>
-    <form action="/clear">
+    <!-- <form action="/clear">
       <button type="submit" style="margin: 0 0 0 auto;">CLEAR</button>
-    </form>
+    </form> -->
   </div>
 
   <div id="right" class="half {{ 'centered' if not names}}">
     {% if names %}
-    <div>
+    <div style="margin-bottom: 10px;">
       <form>
         <label><input type="radio" name="item" value="item1" class="item-radio" data-index="0">{{names[0]}}</label><br>
         <label><input type="radio" name="item" value="item2" class="item-radio" data-index="1">{{names[1]}}</label><br>
@@ -56,6 +57,7 @@
     {% endif %}
     <div id="display">
       {% if names %}
+      <hr id="hr-" style="display: none;">
       <p id="ingredients-0" style="display: none;">{{ ingredients[0]|safe }}</p>
       <p id="ingredients-1" style="display: none;">{{ ingredients[1]|safe }}</p>
       <p id="ingredients-2" style="display: none;">{{ ingredients[2]|safe }}</p>
@@ -81,10 +83,10 @@ document.querySelectorAll('.item-radio').forEach(function(radio) {
     if (this.checked) {
       document.getElementById('ingredients-' + index).style.display = 'block';
       document.getElementById('procedure-' + index).style.display = 'block';
+      document.getElementById('hr-').style.display = 'block';
     }
   });
 });
-
 </script>
 
 {% endblock %}

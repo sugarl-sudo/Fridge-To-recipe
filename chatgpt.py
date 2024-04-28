@@ -21,6 +21,7 @@ def chatgpt(prompt):
     body = f'''
     {{
         "model": "gpt-3.5-turbo",
+        "temperature": 0,
         "messages": [
             {{"role": "user", "content": "{prompt}"}}
         ]
@@ -33,7 +34,6 @@ def chatgpt(prompt):
 
     # デシリアライズ
     rj = response.json()
-    # print('rj keys', rj.keys())
 
     answer = rj["choices"][0]["message"]["content"]
     answer = answer.strip()
@@ -70,11 +70,11 @@ def chatgpt(prompt):
             'procedure': procedure
         })
 
-    # 辞書を出力
-    for detail in recipe_details:
-        print(f"Recipe Name: {detail['name']}")
-        print(f"ingredients: {detail['ingredients']}")
-        print(f"procedure: {detail['procedure']}")
+    # # 辞書を出力
+    # for detail in recipe_details:
+    #     print(f"Recipe Name: {detail['name']}")
+    #     print(f"ingredients: {detail['ingredients']}")
+    #     print(f"procedure: {detail['procedure']}")
 
     return recipe_details
 
