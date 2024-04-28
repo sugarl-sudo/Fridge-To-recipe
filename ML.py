@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
+
 def job(filename, sam, ic, gpt3):
     print("==========================================================")
     print("おすすめレシピ")
@@ -49,9 +50,7 @@ def job(filename, sam, ic, gpt3):
         # 検出範囲
         x1, y1, x2, y2 = area.get()
         # 食品の輪郭を取得する
-        contours, _ = cv2.findContours(
-            mono_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-        )
+        contours, _ = cv2.findContours(mono_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # 食品画像を切取る
         food_image = food_image[y1:y2, x1:x2]
         # 分類モデルで食品名を推論する
@@ -60,11 +59,7 @@ def job(filename, sam, ic, gpt3):
         # nodeで始まる名前は、食品では無い
         if class_name.startswith("none") == False:
             data_list.append(Data(food_image, contours, class_name, probs))
-            print(
-                "{} {:.2f}% [{},{},{},{}]".format(
-                    get_name(class_name), probs, x1, y1, x2, y2
-                )
-            )
+            print("{} {:.2f}% [{},{},{},{}]".format(get_name(class_name), probs, x1, y1, x2, y2))
 
     # おすすめレシピ
     print("----------------------------------------------------------")
@@ -87,9 +82,7 @@ def job(filename, sam, ic, gpt3):
 
     for i, data in enumerate(data_list):
         ax1 = fig.add_subplot(H, W, i + 1)
-        ax1.set_title(
-            "{} {:.2f}".format(get_name(data.class_name), data.probs), fontsize=10
-        )
+        ax1.set_title("{} {:.2f}".format(get_name(data.class_name), data.probs), fontsize=10)
         plt.imshow(data.image)
 
     plt.axis("off")
@@ -99,69 +92,32 @@ def job(filename, sam, ic, gpt3):
     os.system("clear")
 
     # 名前の索引
+
+
 def get_name(class_name):
     if class_name == "apple":
         return "りんご"
     elif class_name == "banana":
         return "バナナ"
-    elif class_name == "beef":
-        return "牛肉"
-    elif class_name == "blueberries":
-        return "ブルーベリー"
-    elif class_name == "bread":
-        return "パン"
-    elif class_name == "butter":
-        return "バター"
-    elif class_name == "carrot":
+    elif class_name == "Carrot":
         return "にんじん"
-    elif class_name == "cheese":
-        return "チーズ"
-    elif class_name == "chicken":
-        return "鶏肉"
-    elif class_name == "chicken_breast":
-        return "鶏胸肉"
-    elif class_name == "chocolate":
-        return "チョコレート"
-    elif class_name == "corn":
-        return "とうもろこし"
-    elif class_name == "eggs":
-        return "卵"
-    elif class_name == "flour":
-        return "小麦粉"
-    elif class_name == "goat_cheese":
-        return "チーズ"
-    elif class_name == "green_beans":
-        return "インゲン豆"
-    elif class_name == "ground_beef":
-        return "挽肉"
-    elif class_name == "ham":
-        return "ハム"
-    elif class_name == "heavy_cream":
-        return "生クリーム"
-    elif class_name == "lime":
-        return "ライム"
-    elif class_name == "milk":
-        return "牛乳"
-    elif class_name == "mushrooms":
-        return "キノコ"
+    elif class_name == "Cabbege":
+        return "キャベツ"
+    elif class_name == "Cauliflower":
+        return "カリフラワー"
+    elif class_name == "eggplant":
+        return "ナス"
     elif class_name == "onion":
         return "玉ねぎ"
-    elif class_name == "potato":
+    elif class_name == "Potato":
         return "じゃがいも"
-    elif class_name == "shrimp":
-        return "えび"
-    elif class_name == "spinach":
-        return "ほうれん草"
-    elif class_name == "strawberries":
-        return "いちご"
-    elif class_name == "sugar":
-        return "砂糖"
-    elif class_name == "sweet_potato":
-        return "さつまいも"
-    elif class_name == "tomato":
+    elif class_name == "Tomato":
         return "トマト"
+    elif class_name == "none":
+        return "食品ではない"
     else:
-        return "食品ではない".format(class_name)
+        ValueError("Unknown class name")
+
 
 def read_image(file_name):
     image = cv2.imread(file_name)

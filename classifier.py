@@ -100,7 +100,7 @@ def run_classifier():
      # クラス数を指定
     model = initialize_model(num_classes).to(device)
     epoch = 18
-    load_path = f"./models/veg_and_fruite/resnet18-fine/"
+    load_path = f"./models/resnet50-fine/"
     # モデルのロード
     # model = load_model("classifier/results/veg_dataset/resnet18-fine/model_epoch_best.pth", model, device)
     # model = load_model("classifier/results/veg_and_fruite/resnet50-fine/model_epoch_15.pth", model, device)
