@@ -3,57 +3,67 @@
 <div class="container">
 
   <div id="left" class="half">
-    <h1>レシピ提案AI</h1>
+    <h1>Fridge-to-Recipe</h1>
     <form action="/upload" method="post" enctype="multipart/form-data" class="img-form">
       <div class="centered">
         <label for="file-sample" class="select-button">画像を選択</label>
         <input id="file-sample" type="file" name="image" accept="image/png, image/jpeg" style="display: none;">
-        <img id="file-preview" style="height: 30px;">
+      </div>
+      <div class="centered">
+        <span class="dli-chevron-down"></span>
       </div>
       <div class="centered img-display">
+        <img id="file-preview" style="height: 150px;">
         {% if images %}
           {% for path in images %}
               <img src="images/{{ path }}" style="height: 150px;">
           {% endfor %}
         {% endif %}
       </div>
-      <div>
+      <div class="centered">
+        <span class="dli-chevron-down"></span>
+      </div>
+      <div class="centered">
         <select id="food" name="item">
-            <option value="選択してください">選択してください</option>
+            <option value="追加したい食材を選択してください">追加したい食材を選択してください</option>
             <option value="肉">肉</option>
             <option value="魚">魚</option>
             <option value="卵">卵</option>
         </select>
       </div>
       <div class="centered">
-        <button type="submit" class="suggest-button">提案</button>
+        <span class="dli-chevron-down"></span>
+      </div>
+      <div class="centered">
+        <label for="suggest" class="suggest-button">レシピ提案</label>
+        <button id="suggest" type="submit" style="display: none;"></button>
       </div>
     </form>
     <form action="/clear">
-      <button type="submit">CLEAR</button>
+      <button type="submit" style="margin: 0 0 0 auto;">CLEAR</button>
     </form>
   </div>
 
-  <div id="right" class="half">
-    <div style="border: 1px solid aqua;">
-      {% if names %}
+  <div id="right" class="half {{ 'centered' if not names}}">
+    {% if names %}
+    <div>
       <form>
         <label><input type="radio" name="item" value="item1" class="item-radio" data-index="0">{{names[0]}}</label><br>
         <label><input type="radio" name="item" value="item2" class="item-radio" data-index="1">{{names[1]}}</label><br>
         <label><input type="radio" name="item" value="item3" class="item-radio" data-index="2">{{names[2]}}</label><br>
       </form>
-      {% endif %}
     </div>
-    <div id="display" style="border: 1px solid aqua;">
-      {% if ingredients %}
+    {% endif %}
+    <div id="display">
+      {% if names %}
       <p id="ingredients-0" style="display: none;">{{ ingredients[0]|safe }}</p>
       <p id="ingredients-1" style="display: none;">{{ ingredients[1]|safe }}</p>
       <p id="ingredients-2" style="display: none;">{{ ingredients[2]|safe }}</p>
-      {% endif %}
-      {% if procedures %}
       <p id="procedure-0" style="display: none;">{{ procedures[0]|safe }}</p>
       <p id="procedure-1" style="display: none;">{{ procedures[1]|safe }}</p>
       <p id="procedure-2" style="display: none;">{{ procedures[2]|safe }}</p>
+      {% else %}
+      <p style="color: gray;">提案されたレシピが表示されます。</p>
       {% endif %}
     </div>
   </div>

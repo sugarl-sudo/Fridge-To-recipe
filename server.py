@@ -41,6 +41,7 @@ def upload():
         cv2.imwrite(save_path, img)
         # 入力画像から食材を検出
         # food_names = ML(img)
+        # print(f"food_names: {food_names}")
         food_names = ["卵", "鶏肉", "七味"]
 
         #  フォームで選択されたテキストを取得
