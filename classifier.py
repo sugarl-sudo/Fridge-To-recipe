@@ -34,7 +34,7 @@ class UnlabeledDataset(Dataset):
 
 # モデル構造の定義
 def initialize_model(num_classes):
-    model = models.resnet18(pretrained=True)
+    model = models.resnet50(pretrained=True)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
     return model
@@ -57,8 +57,8 @@ def prepare_dataloader(data_dir, batch_size=1):
     )
 
     # dataset = ImageFolder(os.path.join(data_dir), data_transforms)
-    dataset = UnlabeledDataset(os.path.join(data_dir, 'segment_images'), data_transforms)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataset = UnlabeledDataset(os.path.join(data_dir, 'segment_fullimages'), data_transforms)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
     return dataloader
 
 
@@ -70,14 +70,21 @@ def inference(model, dataloader, device, idx_to_class):
             inputs = inputs.to(device)
             # labels = labels.to(device)
             outputs = model(inputs)
-            _, predicted = torch.max(outputs.data, 1)
+            predicted_score, predicted  = torch.max(outputs.data, 1)
+            # print(predicted_score)
+            # if predicted_score < 3.0:
+            #     continue
+            # print(outputs)
             # total += labels.size(0)
             # correct += (predicted == labels).sum().item()
         # print(f'Accuracy: {100 * correct / total}%')
-            print(f'fileName, class', file_name, idx_to_class[predicted.item()])
+            # print(f'fileName, class', file_name, idx_to_class[predicted.item()])
 
             # print(predicted,)
-            segment_classes.append(idx_to_class[predicted.item()])
+            if idx_to_class[predicted.item()] is not None:
+                 print(idx_to_class)
+                 segment_classes.append(idx_to_class[predicted.item()])
+    print(segment_classes)            
     return segment_classes
 
 
@@ -86,15 +93,28 @@ def run_classifier():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # モデルとオプティマイザの初期化
-    num_classes = 36  # クラス数を指定
+    # num_classes = 15
+    # num_classes = 18
+    # num_classes = 36
+    num_classes =  10
+     # クラス数を指定
     model = initialize_model(num_classes).to(device)
     epoch = 18
     load_path = f"./models/veg_and_fruite/resnet18-fine/"
     # モデルのロード
-    model = load_model(os.path.join(load_path, f"model_epoch_{epoch}.pth"), model, device)
-    data_dir = "./data"
+    # model = load_model("classifier/results/veg_dataset/resnet18-fine/model_epoch_best.pth", model, device)
+    # model = load_model("classifier/results/veg_and_fruite/resnet50-fine/model_epoch_15.pth", model, device)
+    # model = load_model("classifier/results /resnet18-fine/model_epoch_best.pth", model, device)
+
+    # best model!
+    model = load_model("classifier/results/veg_10/resnet50-fine/model_epoch_best.pth", model, device)
+
+    data_dir = "./data/"
     dataloader = prepare_dataloader(data_dir)
-    with open(os.path.join(load_path, 'train_class_ids.yaml')) as f:
+    # with open('./classifier/results/veg_dataset/resnet18-fine/train_class_ids.yaml') as f:
+    # with open('./classifier/results/veg_and_fruite/resnet50-fine/train_class_ids.yaml') as f:
+    # best model!
+    with open('./classifier/results/veg_10/resnet50-fine/train_class_ids.yaml') as f:
         idx_to_class = yaml.load(f, Loader=yaml.FullLoader)
     # print(idx_to_class)
     segment_classes = inference(model, dataloader, device, idx_to_class)

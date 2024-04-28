@@ -73,10 +73,17 @@ def read_image(file_name):
 
 
 def run_sam():
-    image, height, width = read_image("./data/uploaded_images/uploaded_image.png")
-    image = cv2.resize(image, (640, 480))
-    height, width = image.shape[:2]
-    sam = SegmentAnything(device, "vit_b", "./models/sam_vit_b_01ec64.pth")
+    resize_num =   4.5
+    # image, height, width = read_image("./data/uploaded_images/risou2.png")
+    image, height, width = read_image("./data/uploaded_images/uploaded_image11.jpg")
+    height, width = int(height/resize_num), int(width/resize_num)
+    # image = cv2.resize(image, (960, 480))
+    # image = cv2.resize(image,  (1920, 960))　
+    # image = cv2.resize(image, (2880,2880))
+    image = cv2.resize(image, (width, height))
+    # height, width = image.shape[:2]
+    # sam = SegmentAnything(device, "vit_b", "./models/sam_vit_b_01ec64.pth")
+    sam = SegmentAnything(device, "vit_l", "./models/sam_vit_l_0b3195.pth")
     # マスク生成
     sam.generat_masks(image)
     # 一定のサイズのものだけを抽出する
@@ -115,7 +122,7 @@ def run_sam():
         # contours, _ = cv2.findContours(mono_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # 食品画像を切取る
         food_image = food_image[y1:y2, x1:x2]
-        cv2.imwrite(f"./data/segment_images/food_image_{index}.png", cv2.cvtColor(food_image, cv2.COLOR_RGB2BGR))
+        cv2.imwrite(f"./data/segment_fullimages/food_image_{index}.png", cv2.cvtColor(food_image, cv2.COLOR_RGB2BGR))
         # break
 
 

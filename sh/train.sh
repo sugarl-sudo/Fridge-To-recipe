@@ -1,5 +1,7 @@
 results='./classifier/results/veg_dataset'
 data='./classifier/data/veg_dataset/'
+results='./classifier/results/veg_and_fruit'
+data='./classifier/data/veg_and_fruits_dataset/'
 model='resnet18-fine'
 save_dir=$results/$model
 mkdir -p $save_dir
